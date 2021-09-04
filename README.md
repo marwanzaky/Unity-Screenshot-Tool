@@ -1,6 +1,6 @@
 # Unity Screenshot Tool
 
-## How to use the Unity Screenshot Tool?
+## Usage
 1. Go to "Tools/Screenshot" to open a new Windows
 2. Simply click on "Take a Screenshot" button
 3. Or, use a shorcut key by enabling the "Use Key Code" and then choose a key.
