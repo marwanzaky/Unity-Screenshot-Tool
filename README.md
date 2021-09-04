@@ -1,2 +1,2 @@
 # screenshot-tool
-#Unity Screenshot Tool
+# Unity Screenshot Tool
