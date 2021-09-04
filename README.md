@@ -1,4 +1,4 @@
-# screenshot-tool
+# unity-screenshot-tool
 # Unity Screenshot Tool
 
 ## How to use the Unity Screenshot Tool?
