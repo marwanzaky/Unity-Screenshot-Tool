@@ -1,5 +1,10 @@
 # Unity Screenshot Tool
 
+## Features
+1. Easy to UI
+2. You can use shortcuts during the gameplay mode
+3. Custom the name and location
+
 ## Usage
 1. Go to "Tools/Screenshot" to open a new Windows
 2. Simply click on "Take a Screenshot" button
