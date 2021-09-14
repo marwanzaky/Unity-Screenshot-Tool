@@ -37,5 +37,5 @@ sysinfo.txt
 *.unitypackage
 
 [Ll]ogs/
-[Uu]serSettings/
+/[Uu]ser[Ss]ettings/
 
