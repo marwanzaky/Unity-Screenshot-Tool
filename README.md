@@ -1,7 +1,7 @@
 # Unity Screenshot Tool
 
 ## Features
-1. Easy to UI
+1. Easy to use
 2. You can use shortcuts during the gameplay mode
 3. Custom the name and location
 
