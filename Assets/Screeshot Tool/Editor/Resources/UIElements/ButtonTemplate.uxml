@@ -1,0 +1,5 @@
+<UXML xmlns="UnityEngine.UIElements">
+  <Button class="screenshot-tool-button">
+    <VisualElement class="screenshot-tool-button-icon"/>
+  </Button>
+</UXML>
