@@ -16,6 +16,31 @@ public class Screenshot : EditorWindow
     EnumField keyCodeEnumField;
     EnumField formatEnumField;
 
+    #region Private Properties
+
+    int ShotIndex
+    {
+        get
+        {
+            const int DEFAULT_VALUE = 1;
+            return PlayerPrefs.GetInt("screenshot-index", DEFAULT_VALUE);
+        }
+        set => PlayerPrefs.SetInt("screenshot-index", value);
+    }
+
+    string Path
+    {
+        get
+        {
+            const string defaultValue = "";
+            return PlayerPrefs.GetString("screenshot-path", defaultValue);
+        }
+
+        set => PlayerPrefs.SetString("screenshot-path", value);
+    }
+
+    #endregion
+
     [MenuItem("Tools/Screenshot _%#T")]
     public static void ShowWindow()
     {
@@ -58,14 +83,12 @@ public class Screenshot : EditorWindow
         // Shortcut KeyCode Renderer
         useKeyCodeToggle.RegisterValueChangedCallback(res =>
         {
-            if (res.newValue)
+            VisualElementRenderer("shortcut-keycode", el =>
             {
-                VisualElementRenderer("shortcut-keycode", el => { el.Insert(0, keyCodeEnumField); });
-            }
-            else
-            {
-                VisualElementRenderer("shortcut-keycode", el => { el.RemoveAt(0); });
-            }
+                if (res.newValue)
+                    el.Insert(0, keyCodeEnumField);
+                else el.RemoveAt(0);
+            });
         });
 
         // Format KeyCode Renderer
@@ -94,58 +117,31 @@ public class Screenshot : EditorWindow
         switch (name)
         {
             case "Screenshot": Shot(); break;
-            case "Location": SelectFilePath(); break;
+            case "Location": SelectPath(); break;
         }
     }
 
     void Shot()
     {
-        if (string.IsNullOrEmpty(FilePath))
-            SelectFilePath();
+        if (string.IsNullOrEmpty(Path))
+            SelectPath();
 
-        if (string.IsNullOrEmpty(FilePath))
+        if (string.IsNullOrEmpty(Path))
             return;
 
         var format = (Screenshot.Format)formatEnumField.value;
         var formatStr = '.' + format.ToString().ToLower();
-        var fullName = $"{fileNameTextField.text + Index + formatStr}";
-        var path = Path.Combine(FilePath, fullName);
+        var fullName = $"{fileNameTextField.text + ShotIndex + formatStr}";
+        var path = System.IO.Path.Combine(Path, fullName);
 
         ScreenCapture.CaptureScreenshot(path);
-        Index++;
+        ShotIndex++;
 
-        Debug.Log($"{fullName} '{FilePath}'");
+        Debug.Log($"{fullName} '{Path}'");
     }
 
-    void SelectFilePath()
+    void SelectPath()
     {
-        FilePath = EditorUtility.OpenFolderPanel("Select a folder", "", "Screenshot");
-    }
-
-    int Index
-    {
-        get
-        {
-            const int DEFAULT_VALUE = 1;
-            return PlayerPrefs.GetInt("screenshot-index", DEFAULT_VALUE);
-        }
-        set
-        {
-            PlayerPrefs.SetInt("screenshot-index", value);
-        }
-    }
-
-    string FilePath
-    {
-        get
-        {
-            const string defaultValue = "";
-            return PlayerPrefs.GetString("screenshot-path", defaultValue);
-        }
-
-        set
-        {
-            PlayerPrefs.SetString("screenshot-path", value);
-        }
+        Path = EditorUtility.OpenFolderPanel("Select a folder", "", "Screenshot");
     }
 }
