@@ -2,8 +2,9 @@
 
 ## Features
 1. Easy to use
-2. You can use shortcuts during the gameplay mode
-3. Custom the name and location
+2. Supports PNG or JPG image format
+3. You can use shortcuts during the gameplay mode
+4. Custom the name and location
 
 ## Usage
 1. Go to "Tools/Screenshot" to open a new Windows
