@@ -3,7 +3,6 @@
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
-[Ss]creenshot/
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -39,5 +38,4 @@ sysinfo.txt
 
 [Ll]ogs/
 /[Uu]ser[Ss]ettings/
-
 
