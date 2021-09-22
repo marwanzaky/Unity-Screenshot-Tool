@@ -1,101 +1,69 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
-using UnityEditor.UIElements;
-using UnityEngine.UIElements;
-using System;
 
 public class Screenshot : EditorWindow
 {
-    public enum Format { PNG, JPG }
+    bool useKeyCode = false;
+    KeyCode keyCode = KeyCode.F12;
+    string fileName = "Screenshot";
 
-    VisualElement root;
-    TextField fileNameTextField;
-    Toggle useKeyCodeToggle;
-
-    EnumField keyCodeEnumField;
-    EnumField formatEnumField;
-
-    [MenuItem("Tools/Screenshot _%#T")]
-    public static void ShowWindow()
+    [MenuItem("Tools/Screenshot")]
+    static void Init()
     {
-        var window = GetWindow<Screenshot>();
-        window.titleContent = new GUIContent("Screenshot Tool");
-        window.minSize = new Vector2(250, 50);
+        var window = (Screenshot)EditorWindow.GetWindow(typeof(Screenshot));
+        window.Show();
     }
 
     void Update()
     {
-        if (useKeyCodeToggle.value)
+        if (useKeyCode)
         {
-            if (Input.GetKeyDown((KeyCode)keyCodeEnumField.value))
+            if (Input.GetKeyDown(keyCode))
                 Shot();
 
             Repaint();
         }
     }
-    void OnEnable()
+
+    void OnGUI()
     {
-        root = rootVisualElement;
-        root.styleSheets.Add(Resources.Load<StyleSheet>("UIElements/ScreenshotTool_Style"));
+        ScreenshotSettings();
 
-        var visualTree = Resources.Load<VisualTreeAsset>("UIElements/ScreenshotTool_Main");
-        visualTree.CloneTree(root);
-
-        keyCodeEnumField = new EnumField("Key Code", KeyCode.F12);
-        formatEnumField = new EnumField("Format", Format.PNG);
-
-        // Setup buttons
-        var toolButtons = root.Query<Button>();
-        toolButtons.ForEach(SetupButton);
-
-        // Reference to the Use Key Code
-        fileNameTextField = root.Q<TextField>(className: "file-name");
-
-        // Reference to the File Name
-        useKeyCodeToggle = root.Q<Toggle>(className: "use-keycode-toggle");
-
-        // Shortcut KeyCode Renderer
-        useKeyCodeToggle.RegisterValueChangedCallback(res =>
-        {
-            if (res.newValue)
-            {
-                VisualElementRenderer("shortcut-keycode", el => { el.Insert(0, keyCodeEnumField); });
-            }
-            else
-            {
-                VisualElementRenderer("shortcut-keycode", el => { el.RemoveAt(0); });
-            }
-        });
-
-        // Format KeyCode Renderer
-        VisualElementRenderer("format", el => { el.Insert(0, formatEnumField); });
+        OtherSettings();
     }
 
-    void VisualElementRenderer(string className, Action<VisualElement> funcCall)
+    void ScreenshotSettings()
     {
-        var visualElements = root.Query<VisualElement>(className: className);
-        visualElements.ForEach(funcCall);
+        GUILayout.Label("Base Settings", EditorStyles.boldLabel);
+
+        HotKeys();
+
+        GUILayout.BeginHorizontal();
+
+        if (GUILayout.Button("Take a Screenshot"))
+            Shot();
+
+        if (GUILayout.Button("Select Folder"))
+            SelectFilePath();
+
+        GUILayout.EndHorizontal();
     }
 
-    void SetupButton(Button button)
+    void OtherSettings()
     {
-        var buttonIcon = button.Q(className: "screenshot-tool-button-icon");
-        var iconPath = "Icons/" + button.parent.name + " Icon";
-        var iconAsset = Resources.Load<Sprite>(iconPath);
+        GUILayout.Label("Other Settings", EditorStyles.boldLabel);
 
-        buttonIcon.style.backgroundImage = iconAsset.texture;
-        button.clickable.clicked += () => HandlerButtonClicked(button.parent.name);
-        button.tooltip = button.parent.name;
+        fileName = EditorGUILayout.TextField("File Name", fileName);
     }
 
-    void HandlerButtonClicked(string name)
+    void HotKeys()
     {
-        switch (name)
-        {
-            case "Screenshot": Shot(); break;
-            case "Location": SelectFilePath(); break;
-        }
+        useKeyCode = EditorGUILayout.BeginToggleGroup("Use Key Code", useKeyCode);
+
+        keyCode = (KeyCode)EditorGUILayout.EnumPopup("Key Code", keyCode);
+
+        EditorGUILayout.EndToggleGroup();
     }
 
     void Shot()
@@ -106,15 +74,12 @@ public class Screenshot : EditorWindow
         if (string.IsNullOrEmpty(FilePath))
             return;
 
-        var format = (Screenshot.Format)formatEnumField.value;
-        var formatStr = '.' + format.ToString().ToLower();
-        var fullName = $"{fileNameTextField.text + Index + formatStr}";
-        var path = Path.Combine(FilePath, fullName);
+        const string FILE_FORMAT = ".png";
+        var fullName = $"{fileName + Index + FILE_FORMAT}";
 
-        ScreenCapture.CaptureScreenshot(path);
+        ScreenCapture.CaptureScreenshot(Path.Combine(FilePath, fullName));
+
         Index++;
-
-        Debug.Log($"{fullName} '{FilePath}'");
     }
 
     void SelectFilePath()
