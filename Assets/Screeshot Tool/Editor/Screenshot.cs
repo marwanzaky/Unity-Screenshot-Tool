@@ -67,7 +67,7 @@ public class Screenshot : EditorWindow
         var visualTree = Resources.Load<VisualTreeAsset>("UIElements/ScreenshotTool_Main");
         visualTree.CloneTree(root);
 
-        keyCodeEnumField = new EnumField("Key Code", KeyCode.F12);
+        keyCodeEnumField = new EnumField(KeyCode.F12);
         formatEnumField = new EnumField("Format", Format.PNG);
 
         // Setup buttons
@@ -104,10 +104,12 @@ public class Screenshot : EditorWindow
     void SetupButton(Button button)
     {
         var buttonIcon = button.Q(className: "screenshot-tool-button-icon");
+        var buttonName = button.Q<Label>(className: "screenshot-tool-button-name");
         var iconPath = "Icons/" + button.parent.name + " Icon";
         var iconAsset = Resources.Load<Sprite>(iconPath);
 
         buttonIcon.style.backgroundImage = iconAsset.texture;
+        buttonName.text = button.parent.name;
         button.clickable.clicked += () => HandlerButtonClicked(button.parent.name);
         button.tooltip = button.parent.name;
     }
